@@ -35,7 +35,7 @@ class VncAuthenticationHandlerTest extends Specification {
 
         def input = new ByteArrayInputStream((challenge + response) as byte[])
 
-        def session = new VncSession(config, input, new ByteArrayOutputStream())
+        def session = new VncSession(config, null, input, new ByteArrayOutputStream())
         session.protocolVersion = new ProtocolVersion(3, 3)
 
         when:
@@ -73,7 +73,7 @@ class VncAuthenticationHandlerTest extends Specification {
 
         def input = new ByteArrayInputStream((challenge + response) as byte[])
 
-        def session = new VncSession(config, input, new ByteArrayOutputStream())
+        def session = new VncSession(config, null, input, new ByteArrayOutputStream())
         session.protocolVersion = new ProtocolVersion(3, minorProtocolVersion)
 
         when:
@@ -96,7 +96,7 @@ class VncAuthenticationHandlerTest extends Specification {
 
     def "should throw an exception if no password supplier was provided"() {
         given:
-        def session = new VncSession(Mock(VernacularConfig), Mock(InputStream), Mock(OutputStream))
+        def session = new VncSession(Mock(VernacularConfig), null, Mock(InputStream), Mock(OutputStream))
 
         when:
         handler.authenticate(session)

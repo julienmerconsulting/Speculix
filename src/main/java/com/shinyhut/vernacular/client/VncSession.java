@@ -7,12 +7,14 @@ import com.shinyhut.vernacular.protocol.messages.ServerInit;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.Socket;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class VncSession {
 
     private final VernacularConfig config;
+    private final Socket socket;
     private final InputStream inputStream;
     private final OutputStream outputStream;
 
@@ -27,8 +29,9 @@ public class VncSession {
     private final ReentrantLock framebufferUpdateLock = new ReentrantLock();
     private final Condition framebufferUpdatedCondition = framebufferUpdateLock.newCondition();
 
-    public VncSession(VernacularConfig config, InputStream inputStream, OutputStream outputStream) {
+    public VncSession(VernacularConfig config, Socket socket, InputStream inputStream, OutputStream outputStream) {
         this.config = config;
+        this.socket = socket;
         this.inputStream = inputStream;
         this.outputStream = outputStream;
     }
@@ -111,11 +114,16 @@ public class VncSession {
         try {
             inputStream.close();
         } catch (IOException ignored) {
-        } finally {
-            try {
-                outputStream.close();
-            } catch (IOException ignored) {
+        }
+        try {
+            outputStream.close();
+        } catch (IOException ignored) {
+        }
+        try {
+            if (socket != null) {
+                socket.close();
             }
+        } catch (IOException ignored) {
         }
     }
 }

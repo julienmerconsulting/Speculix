@@ -19,6 +19,10 @@ public class ZLibRenderer implements Renderer {
         this.inflater = new Inflater();
     }
 
+    public void close() {
+        inflater.end();
+    }
+
     @Override
     public void render(InputStream in, BufferedImage destination, Rectangle rectangle) throws VncException {
         try {

@@ -24,12 +24,12 @@ public class RRERenderer implements Renderer {
 
     @Override
     public void render(InputStream in, BufferedImage destination, Rectangle rectangle) throws VncException {
+        Graphics2D graphic = (Graphics2D) destination.getGraphics();
         try {
             DataInput dataInput = new DataInputStream(in);
             int numberOfSubrectangles = dataInput.readInt();
             Pixel bgColor = pixelDecoder.decode(in, pixelFormat);
 
-            Graphics2D graphic = (Graphics2D) destination.getGraphics();
             graphic.setColor(new Color(bgColor.getRed(), bgColor.getGreen(), bgColor.getBlue()));
             graphic.fillRect(rectangle.getX(), rectangle.getY(), rectangle.getWidth(), rectangle.getHeight());
 
@@ -44,6 +44,8 @@ public class RRERenderer implements Renderer {
             }
         } catch (IOException e) {
             throw new UnexpectedVncException(e);
+        } finally {
+            graphic.dispose();
         }
     }
 

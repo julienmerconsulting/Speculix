@@ -92,6 +92,8 @@ public class HextileRenderer implements Renderer {
             }
         } catch (IOException e) {
             throw new UnexpectedVncException(e);
+        } finally {
+            g.dispose();
         }
     }
 

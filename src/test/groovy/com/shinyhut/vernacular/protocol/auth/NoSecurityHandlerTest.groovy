@@ -13,7 +13,7 @@ class NoSecurityHandlerTest extends Specification {
 
     def "for protocol version 3.3, sends no data and returns a 'success' result"() {
         given:
-        def session = new VncSession(Mock(VernacularConfig), new ByteArrayInputStream(), new ByteArrayOutputStream())
+        def session = new VncSession(Mock(VernacularConfig), null, new ByteArrayInputStream(), new ByteArrayOutputStream())
         session.protocolVersion = new ProtocolVersion(3, 3)
 
         when:
@@ -26,7 +26,7 @@ class NoSecurityHandlerTest extends Specification {
 
     def "for protocol version 3.7, should request SecurityType 'NONE' and return a 'success' result"() {
         given:
-        def session = new VncSession(Mock(VernacularConfig), new ByteArrayInputStream(), new ByteArrayOutputStream())
+        def session = new VncSession(Mock(VernacularConfig), null, new ByteArrayInputStream(), new ByteArrayOutputStream())
         session.protocolVersion = new ProtocolVersion(3, 7)
 
         when:
@@ -40,7 +40,7 @@ class NoSecurityHandlerTest extends Specification {
     def "for protocol version 3.8, should request SecurityType 'NONE' and return the server's response"() {
         given:
         def input = new ByteArrayInputStream([0x00, 0x00, 0x00, 0x00] as byte[])
-        def session = new VncSession(Mock(VernacularConfig), input, new ByteArrayOutputStream())
+        def session = new VncSession(Mock(VernacularConfig), null, input, new ByteArrayOutputStream())
         session.protocolVersion = new ProtocolVersion(3, 8)
 
         when:

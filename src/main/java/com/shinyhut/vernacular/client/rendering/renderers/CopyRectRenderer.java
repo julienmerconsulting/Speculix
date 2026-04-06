@@ -22,7 +22,12 @@ public class CopyRectRenderer implements Renderer {
             int srcY = dataInput.readUnsignedShort();
             BufferedImage src = new BufferedImage(rectangle.getWidth(), rectangle.getHeight(), TYPE_INT_RGB);
             destination.getSubimage(srcX, srcY, rectangle.getWidth(), rectangle.getHeight()).copyData(src.getRaster());
-            destination.getGraphics().drawImage(src, rectangle.getX(), rectangle.getY(), null);
+            Graphics g = destination.getGraphics();
+            try {
+                g.drawImage(src, rectangle.getX(), rectangle.getY(), null);
+            } finally {
+                g.dispose();
+            }
         } catch (IOException e) {
             throw new UnexpectedVncException(e);
         }

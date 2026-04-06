@@ -32,8 +32,8 @@ public class ClientEventHandler {
     private volatile boolean running;
     private Thread framebufferUpdateLoop;
 
-    private int mouseX;
-    private int mouseY;
+    private volatile int mouseX;
+    private volatile int mouseY;
 
     private LocalDateTime lastFramebufferUpdateRequestTime;
 

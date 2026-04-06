@@ -274,7 +274,7 @@ public class VernacularClient {
     private void createSession(Socket socket) throws IOException, VncException {
         InputStream in = new BufferedInputStream(socket.getInputStream());
         OutputStream out = socket.getOutputStream();
-        session = new VncSession(config, in, out);
+        session = new VncSession(config, socket, in, out);
 
         handshaker.handshake(session);
         initializer.initialise(session);

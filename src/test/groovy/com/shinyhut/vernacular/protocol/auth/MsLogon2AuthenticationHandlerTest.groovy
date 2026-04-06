@@ -42,7 +42,7 @@ class MsLogon2AuthenticationHandlerTest extends Specification {
         def response = [0x00, 0x00, 0x00, 0x00]
         def input = new ByteArrayInputStream((generator + modulus + serverPublicKey + response) as byte[])
 
-        def session = new VncSession(config, input, new ByteArrayOutputStream())
+        def session = new VncSession(config, null, input, new ByteArrayOutputStream())
         session.protocolVersion = new ProtocolVersion(3, 8)
 
         when:

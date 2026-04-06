@@ -29,21 +29,27 @@ public class Framebuffer {
     private final Map<Long, ColorMapEntry> colorMap = new ConcurrentHashMap<>();
     private final Map<Encoding, Renderer> renderers = new ConcurrentHashMap<>();
     private final CursorRenderer cursorRenderer;
+    private final ZLibRenderer zLibRenderer;
 
-    private BufferedImage frame;
+    private volatile BufferedImage frame;
 
     public Framebuffer(VncSession session) {
         PixelDecoder pixelDecoder = new PixelDecoder(colorMap);
         RawRenderer rawRenderer = new RawRenderer(pixelDecoder, session.getPixelFormat());
+        zLibRenderer = new ZLibRenderer(rawRenderer);
         renderers.put(RAW, rawRenderer);
         renderers.put(COPYRECT, new CopyRectRenderer());
         renderers.put(RRE, new RRERenderer(pixelDecoder, session.getPixelFormat()));
         renderers.put(HEXTILE, new HextileRenderer(rawRenderer, pixelDecoder, session.getPixelFormat()));
-        renderers.put(ZLIB, new ZLibRenderer(rawRenderer));
+        renderers.put(ZLIB, zLibRenderer);
         cursorRenderer = new CursorRenderer(rawRenderer);
 
         frame = new BufferedImage(session.getFramebufferWidth(), session.getFramebufferHeight(), TYPE_INT_RGB);
         this.session = session;
+    }
+
+    public void close() {
+        zLibRenderer.close();
     }
 
     public void processUpdate(FramebufferUpdate update) throws VncException {
@@ -88,7 +94,12 @@ public class Framebuffer {
         session.setFramebufferWidth(width);
         session.setFramebufferHeight(height);
         BufferedImage resized = new BufferedImage(width, height, TYPE_INT_RGB);
-        resized.getGraphics().drawImage(frame, 0, 0, null);
+        Graphics g = resized.getGraphics();
+        try {
+            g.drawImage(frame, 0, 0, null);
+        } finally {
+            g.dispose();
+        }
         frame = resized;
     }
 
