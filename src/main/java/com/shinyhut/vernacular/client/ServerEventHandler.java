@@ -90,6 +90,9 @@ public class ServerEventHandler {
             }
         } catch (InterruptedException ignored) {
         }
+    }
+
+    void closeResources() {
         framebuffer.close();
     }
 

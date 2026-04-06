@@ -96,6 +96,9 @@ public class VernacularClient {
         if (session != null) {
             session.kill();
         }
+        if (serverEventHandler != null) {
+            serverEventHandler.closeResources();
+        }
     }
 
     /**
@@ -272,12 +275,24 @@ public class VernacularClient {
     }
 
     private void createSession(Socket socket) throws IOException, VncException {
-        InputStream in = new BufferedInputStream(socket.getInputStream());
-        OutputStream out = socket.getOutputStream();
-        session = new VncSession(config, socket, in, out);
+        try {
+            InputStream in = new BufferedInputStream(socket.getInputStream());
+            OutputStream out = socket.getOutputStream();
+            session = new VncSession(config, socket, in, out);
 
-        handshaker.handshake(session);
-        initializer.initialise(session);
+            handshaker.handshake(session);
+            initializer.initialise(session);
+        } catch (Exception e) {
+            if (session == null) {
+                try {
+                    socket.close();
+                } catch (IOException ignored) {
+                }
+            }
+            if (e instanceof IOException) throw (IOException) e;
+            if (e instanceof VncException) throw (VncException) e;
+            throw new RuntimeException(e);
+        }
     }
 
     private void handleError(VncException e) {

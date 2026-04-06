@@ -4,6 +4,7 @@ import com.shinyhut.vernacular.client.exceptions.UnexpectedVncException;
 import com.shinyhut.vernacular.client.exceptions.VncException;
 import com.shinyhut.vernacular.protocol.messages.Rectangle;
 
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.DataInput;
 import java.io.DataInputStream;
