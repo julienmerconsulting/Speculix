@@ -75,8 +75,9 @@ public class Framebuffer {
             long renderNs = System.nanoTime() - t0;
             paint();
             long totalNs = System.nanoTime() - t0;
+            int pixels = totalPixels;
             BENCH.fine(() -> String.format("frame: %d rects, %d px, render=%d.%03dms, total=%d.%03dms",
-                    rects, totalPixels,
+                    rects, pixels,
                     renderNs / 1_000_000, (renderNs / 1_000) % 1000,
                     totalNs / 1_000_000, (totalNs / 1_000) % 1000));
             session.framebufferUpdated();
