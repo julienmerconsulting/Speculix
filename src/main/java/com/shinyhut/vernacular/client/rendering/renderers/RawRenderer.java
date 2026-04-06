@@ -5,7 +5,6 @@ import com.shinyhut.vernacular.client.exceptions.VncException;
 import com.shinyhut.vernacular.protocol.messages.PixelFormat;
 import com.shinyhut.vernacular.protocol.messages.Rectangle;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,8 +29,7 @@ public class RawRenderer implements Renderer {
             int sx = x;
             int sy = y;
             for (int i = 0; i < width * height; i++) {
-                Pixel pixel = pixelDecoder.decode(in, pixelFormat);
-                destination.setRGB(sx, sy, new Color(pixel.getRed(), pixel.getGreen(), pixel.getBlue()).getRGB());
+                destination.setRGB(sx, sy, pixelDecoder.decodeAsRgb(in, pixelFormat));
                 sx++;
                 if (sx == x + width) {
                     sx = x;

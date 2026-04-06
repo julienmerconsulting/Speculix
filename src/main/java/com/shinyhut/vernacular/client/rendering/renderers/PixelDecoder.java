@@ -19,6 +19,11 @@ public class PixelDecoder {
     }
 
     public Pixel decode(InputStream in, PixelFormat pixelFormat) throws IOException {
+        int rgb = decodeAsRgb(in, pixelFormat);
+        return new Pixel((rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
+    }
+
+    public int decodeAsRgb(InputStream in, PixelFormat pixelFormat) throws IOException {
         int bytesToRead = pixelFormat.getBytesPerPixel();
         long value = 0L;
 
@@ -46,7 +51,7 @@ public class PixelDecoder {
             blue = shrink(color.getBlue());
         }
 
-        return new Pixel(red, green, blue);
+        return 0xFF000000 | (red << 16) | (green << 8) | blue;
     }
 
     private static int stretch(int value, int max) {
