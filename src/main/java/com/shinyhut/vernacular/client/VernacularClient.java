@@ -275,24 +275,22 @@ public class VernacularClient {
     }
 
     private void createSession(Socket socket) throws IOException, VncException {
+        InputStream in;
+        OutputStream out;
         try {
-            InputStream in = new BufferedInputStream(socket.getInputStream());
-            OutputStream out = socket.getOutputStream();
-            session = new VncSession(config, socket, in, out);
-
-            handshaker.handshake(session);
-            initializer.initialise(session);
-        } catch (Exception e) {
-            if (session == null) {
-                try {
-                    socket.close();
-                } catch (IOException ignored) {
-                }
+            in = new BufferedInputStream(socket.getInputStream());
+            out = socket.getOutputStream();
+        } catch (IOException e) {
+            try {
+                socket.close();
+            } catch (IOException ignored) {
             }
-            if (e instanceof IOException) throw (IOException) e;
-            if (e instanceof VncException) throw (VncException) e;
-            throw new RuntimeException(e);
+            throw e;
         }
+        session = new VncSession(config, socket, in, out);
+
+        handshaker.handshake(session);
+        initializer.initialise(session);
     }
 
     private void handleError(VncException e) {
