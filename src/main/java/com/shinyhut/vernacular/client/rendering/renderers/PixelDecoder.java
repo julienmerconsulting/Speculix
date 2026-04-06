@@ -32,6 +32,35 @@ public class PixelDecoder {
             value |= in.read();
         }
 
+        return toRgb(value, pixelFormat);
+    }
+
+    public int decodeAsRgb(byte[] data, int offset, PixelFormat pixelFormat) {
+        int bytesToRead = pixelFormat.getBytesPerPixel();
+        long value = 0L;
+
+        for (int i = 0; i < bytesToRead; i++) {
+            value <<= 8;
+            value |= data[offset + i] & 0xFF;
+        }
+
+        return toRgb(value, pixelFormat);
+    }
+
+    public void decodeBulk(byte[] data, int dataOffset, int[] pixels, int pixelOffset, int count, PixelFormat pixelFormat) {
+        int bpp = pixelFormat.getBytesPerPixel();
+        int off = dataOffset;
+        for (int i = 0; i < count; i++) {
+            long value = 0L;
+            for (int b = 0; b < bpp; b++) {
+                value <<= 8;
+                value |= data[off++] & 0xFF;
+            }
+            pixels[pixelOffset + i] = toRgb(value, pixelFormat);
+        }
+    }
+
+    private int toRgb(long value, PixelFormat pixelFormat) {
         int red;
         int green;
         int blue;

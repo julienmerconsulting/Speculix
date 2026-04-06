@@ -41,8 +41,8 @@ public class ZLibRenderer implements Renderer {
 
             byte[] decompressedData = baos.toByteArray();
 
-            rawRenderer.render(
-                    new ByteArrayInputStream(decompressedData),
+            rawRenderer.renderFromBytes(
+                    decompressedData, 0,
                     destination,
                     rectangle.getX(),
                     rectangle.getY(),

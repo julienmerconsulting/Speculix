@@ -18,12 +18,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 import static com.shinyhut.vernacular.protocol.messages.Encoding.*;
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 import static java.awt.image.BufferedImage.TYPE_INT_RGB;
 
 public class Framebuffer {
+
+    private static final Logger BENCH = Logger.getLogger("speculix.bench");
 
     private final VncSession session;
     private final Map<Long, ColorMapEntry> colorMap = new ConcurrentHashMap<>();
@@ -53,9 +56,12 @@ public class Framebuffer {
     }
 
     public void processUpdate(FramebufferUpdate update) throws VncException {
+        long t0 = System.nanoTime();
         InputStream in = session.getInputStream();
+        int rects = update.getNumberOfRectangles();
+        int totalPixels = 0;
         try {
-            for (int i = 0; i < update.getNumberOfRectangles(); i++) {
+            for (int i = 0; i < rects; i++) {
                 Rectangle rectangle = Rectangle.decode(in);
                 if (rectangle.getEncoding() == DESKTOP_SIZE) {
                     resizeFramebuffer(rectangle);
@@ -63,9 +69,16 @@ public class Framebuffer {
                     updateCursor(rectangle, in);
                 } else {
                     renderers.get(rectangle.getEncoding()).render(in, frame, rectangle);
+                    totalPixels += rectangle.getWidth() * rectangle.getHeight();
                 }
             }
+            long renderNs = System.nanoTime() - t0;
             paint();
+            long totalNs = System.nanoTime() - t0;
+            BENCH.fine(() -> String.format("frame: %d rects, %d px, render=%d.%03dms, total=%d.%03dms",
+                    rects, totalPixels,
+                    renderNs / 1_000_000, (renderNs / 1_000) % 1000,
+                    totalNs / 1_000_000, (totalNs / 1_000) % 1000));
             session.framebufferUpdated();
         } catch (IOException e) {
             throw new UnexpectedVncException(e);
