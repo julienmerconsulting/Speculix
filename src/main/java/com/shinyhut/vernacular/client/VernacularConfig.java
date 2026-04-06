@@ -19,6 +19,7 @@ public class VernacularConfig {
     private Supplier<String> passwordSupplier;
     private Consumer<VncException> errorListener;
     private Consumer<Image> screenUpdateListener;
+    private FramebufferUpdateListener framebufferUpdateListener;
     private Consumer<Void> bellListener;
     private Consumer<String> remoteClipboardListener;
     private BiConsumer<Image, Point> mousePointerUpdateListener;
@@ -87,6 +88,21 @@ public class VernacularConfig {
      */
     public void setScreenUpdateListener(Consumer<Image> screenUpdateListener) {
         this.screenUpdateListener = screenUpdateListener;
+    }
+
+    public FramebufferUpdateListener getFramebufferUpdateListener() {
+        return framebufferUpdateListener;
+    }
+
+    /**
+     * Specifies a listener that receives dirty rectangles on each framebuffer update.
+     * Unlike screenUpdateListener, this does NOT copy the entire framebuffer — it passes
+     * the live framebuffer reference and the list of rectangles that changed.
+     *
+     * @param framebufferUpdateListener the listener
+     */
+    public void setFramebufferUpdateListener(FramebufferUpdateListener framebufferUpdateListener) {
+        this.framebufferUpdateListener = framebufferUpdateListener;
     }
 
     public BiConsumer<Image, Point> getMousePointerUpdateListener() {

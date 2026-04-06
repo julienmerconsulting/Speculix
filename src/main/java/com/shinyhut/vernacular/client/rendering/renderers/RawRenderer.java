@@ -6,6 +6,7 @@ import com.shinyhut.vernacular.protocol.messages.PixelFormat;
 import com.shinyhut.vernacular.protocol.messages.Rectangle;
 
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,9 +41,20 @@ public class RawRenderer implements Renderer {
 
     void renderFromBytes(byte[] data, int dataOffset, BufferedImage destination, int x, int y, int width, int height) {
         int totalPixels = width * height;
-        int[] pixels = new int[totalPixels];
-        pixelDecoder.decodeBulk(data, dataOffset, pixels, 0, totalPixels, pixelFormat);
-        destination.setRGB(x, y, width, height, pixels, 0, width);
+        if (canDirectWrite(destination)) {
+            int[] backingArray = ((DataBufferInt) destination.getRaster().getDataBuffer()).getData();
+            int scanline = destination.getWidth();
+            pixelDecoder.decodeBulk(data, dataOffset, backingArray, y * scanline + x, width, height, scanline, pixelFormat);
+        } else {
+            int[] pixels = new int[totalPixels];
+            pixelDecoder.decodeBulk(data, dataOffset, pixels, 0, totalPixels, pixelFormat);
+            destination.setRGB(x, y, width, height, pixels, 0, width);
+        }
+    }
+
+    private static boolean canDirectWrite(BufferedImage image) {
+        return (image.getType() == BufferedImage.TYPE_INT_RGB || image.getType() == BufferedImage.TYPE_INT_ARGB)
+                && image.getRaster().getDataBuffer() instanceof DataBufferInt;
     }
 
 }

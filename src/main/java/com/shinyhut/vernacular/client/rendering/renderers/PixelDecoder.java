@@ -60,6 +60,23 @@ public class PixelDecoder {
         }
     }
 
+    public void decodeBulk(byte[] data, int dataOffset, int[] pixels, int pixelOffset,
+                           int width, int height, int scanline, PixelFormat pixelFormat) {
+        int bpp = pixelFormat.getBytesPerPixel();
+        int off = dataOffset;
+        for (int row = 0; row < height; row++) {
+            int rowStart = pixelOffset + row * scanline;
+            for (int col = 0; col < width; col++) {
+                long value = 0L;
+                for (int b = 0; b < bpp; b++) {
+                    value <<= 8;
+                    value |= data[off++] & 0xFF;
+                }
+                pixels[rowStart + col] = toRgb(value, pixelFormat);
+            }
+        }
+    }
+
     private int toRgb(long value, PixelFormat pixelFormat) {
         int red;
         int green;

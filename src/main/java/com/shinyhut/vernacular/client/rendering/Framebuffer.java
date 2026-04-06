@@ -11,9 +11,13 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.WritableRaster;
+import com.shinyhut.vernacular.client.FramebufferUpdateListener;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
@@ -60,6 +64,11 @@ public class Framebuffer {
         InputStream in = session.getInputStream();
         int rects = update.getNumberOfRectangles();
         int totalPixels = 0;
+        List<Rectangle> dirtyRects = null;
+        FramebufferUpdateListener dirtyListener = session.getConfig().getFramebufferUpdateListener();
+        if (dirtyListener != null) {
+            dirtyRects = new ArrayList<>();
+        }
         try {
             for (int i = 0; i < rects; i++) {
                 Rectangle rectangle = Rectangle.decode(in);
@@ -70,10 +79,16 @@ public class Framebuffer {
                 } else {
                     renderers.get(rectangle.getEncoding()).render(in, frame, rectangle);
                     totalPixels += rectangle.getWidth() * rectangle.getHeight();
+                    if (dirtyRects != null) {
+                        dirtyRects.add(rectangle);
+                    }
                 }
             }
             long renderNs = System.nanoTime() - t0;
             paint();
+            if (dirtyListener != null) {
+                dirtyListener.onFramebufferUpdate(frame, dirtyRects);
+            }
             long totalNs = System.nanoTime() - t0;
             int pixels = totalPixels;
             BENCH.info(() -> String.format("frame: %d rects, %d px, render=%d.%03dms, total=%d.%03dms",
