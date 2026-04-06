@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static com.shinyhut.vernacular.client.rendering.ColorDepth.BPP_8_INDEXED;
+import static com.shinyhut.vernacular.client.rendering.ColorDepth.BPP_24_TRUE;
 
 public class VernacularConfig {
 
@@ -24,7 +24,7 @@ public class VernacularConfig {
     private BiConsumer<Image, Point> mousePointerUpdateListener;
     private boolean shared = true;
     private int targetFramesPerSecond = 30;
-    private ColorDepth colorDepth = BPP_8_INDEXED;
+    private ColorDepth colorDepth = BPP_24_TRUE;
     private boolean useLocalMousePointer = false;
     private boolean enableCopyrectEncoding = true;
     private boolean enableExtendedClipboard = true;
