@@ -3,14 +3,14 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.shinyhut</groupId>
-    <artifactId>vernacular</artifactId>
+    <groupId>io.github.julienmerconsulting</groupId>
+    <artifactId>speculix</artifactId>
     <packaging>jar</packaging>
     <version>1.15-SNAPSHOT</version>
 
-    <name>vernacular</name>
+    <name>speculix</name>
     <description>A pure Java VNC client library and viewer application.</description>
-    <url>https://github.com/shinyhut/vernacular-vnc</url>
+    <url>https://github.com/shinyhut/speculix-vnc</url>
 
     <licenses>
         <license>
@@ -29,14 +29,14 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/shinyhut/vernacular-vnc.git</connection>
-        <developerConnection>scm:git:ssh://github.com:shinyhut/vernacular-vnc.git</developerConnection>
-        <url>http://github.com/shinyhut/vernacular-vnc/tree/master</url>
+        <connection>scm:git:git://github.com/shinyhut/speculix-vnc.git</connection>
+        <developerConnection>scm:git:ssh://github.com:shinyhut/speculix-vnc.git</developerConnection>
+        <url>http://github.com/shinyhut/speculix-vnc/tree/master</url>
     </scm>
 
     <properties>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>17</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -92,7 +92,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.shinyhut.vernacular.VernacularViewer</mainClass>
+                            <mainClass>io.github.julienmerconsulting.speculix.SpeculixViewer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
